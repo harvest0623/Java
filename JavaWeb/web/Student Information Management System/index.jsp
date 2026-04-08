@@ -141,6 +141,9 @@
             padding: 30px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 300px;
         }
 
         .card:hover {
@@ -181,7 +184,7 @@
             font-size: 1em;
             text-decoration: none;
             transition: all 0.3s ease;
-            margin-top: 20px;
+            margin-top: auto;
         }
 
         .btn:hover {
