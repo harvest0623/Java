@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--
+        案例2配置：注解注入
+        开启 Bean 的自动扫描功能
+        base-package 指定扫描 org.example.case2 包及其子包下的所有类
+    -->
+    <context:component-scan base-package="example.case2"/>
+
+    <!-- 开启注解驱动（让 @Autowired 等注解生效） -->
+    <context:annotation-config/>
+
+</beans>

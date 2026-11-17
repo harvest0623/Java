@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:component-scan base-package="com" />
+    <bean id="apliAction" class="com.day041.ApliAction">
+    </bean>
+
+    <bean id="student" class="com.day02.Student">
+    </bean>
+
+    <bean id="product" class="com.day02.Product">
+    </bean>
+
+    <bean id="loginImpl" class="com.day03.LoginImpl">
+    </bean>
+
+    <bean id="loginAction" class="com.day03.LoginAction">
+        <property name="loginImpl" ref="loginImpl" />
+    </bean>
+
+    <bean id="updateImpl" class="com.day032.UpdateImpl">
+    </bean>
+
+    <bean id="updateAction" class="com.day032.UpdateAction">
+        <constructor-arg index="0" ref="updateImpl" />
+    </bean>
+</beans>

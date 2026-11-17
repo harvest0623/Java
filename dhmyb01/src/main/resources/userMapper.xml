@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.UserMapper">
+    <insert id="insertUser" parameterType="User">
+        insert into t_user (userName, password, account)
+        values (#{userName}, #{password}, #{account})
+    </insert>
+    <update id="updateUser" parameterType="User">
+        update t_user set userName=#{userName},
+                          password=#{password},account=#{account}
+        where id=#{id}
+    </update>
+    <delete id="deleteUser" parameterType="int">
+        delete from t_user where id=#{id}
+    </delete>
+    <select id="selectA" parameterType="User" resultType="User">
+        select * from t_user where userName=#{0} and password=#{1}
+    </select>
+    <resultMap id="userMap" type="User">
+        <id column="id" property="id" />
+        <result column="userName" property="userName" />
+        <result column="password" property="password" />
+        <result column="account" property="account" />
+    </resultMap>
+    <select id="selectAll" resultMap="userMap">
+        select * from t_user where  id > 1
+    </select>
+
+    <select id="selectByIf" resultMap="userMap">
+        select * from t_user
+        <where>
+            <if test="id!=null">
+                and id>#{id}
+            </if>
+            <if test="userName!=null">
+                and userName=#{userName}
+            </if>
+            <if test="password!=null">
+                and password=#{password}
+            </if>
+            <if test="account!=null ">
+                and account=#{account}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByChoose" resultMap="userMap">
+        select * from t_user
+        <where>
+            <choose>
+                <when test="id!=null">
+                    and id>#{id}
+                </when>
+                <when test="userName!=null">
+                    and userName=#{userName}
+                </when>
+                <when test="password!=null">
+                    and password=#{password}
+                </when>
+
+                <when test="account!=null">
+                    and account=#{account}
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <delete id="deleteByForeach">
+        delete from t_user where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>>
+    </delete>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--
+        开启 Bean 的自动扫描功能
+        base-package 指定要扫描的包（Spring 会递归扫描子包）
+        use-default-filters="true" 会自动识别 @Component、@Service、@Repository、@Controller 等注解
+    -->
+    <context:component-scan base-package="com.day01"/>
+
+    <!--
+        定义 User 类的 Bean，并使用 set 注入属性值
+        class: 类的全限定名
+        property name: 属性名（对应 JavaBean 的 setXxx 方法）
+        value: 要注入的值
+        Spring 容器启动时，会自动调用 User 的无参构造创建对象，
+        然后通过反射调用 setAccount()、setPassword()、setIdentity() 完成注入
+    -->
+    <bean id="user" class="com.day01.User">
+        <property name="account"  value="student001"/>
+        <property name="password" value="123456"/>
+        <property name="identity" value="学生"/>
+    </bean>
+
+</beans>

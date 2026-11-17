@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.homework.mapper.GoodsMapper">
+
+    <!-- 结果映射（字段名 → 属性名，这里字段名一致可以省略，但写上更规范） -->
+    <resultMap id="GoodsMap" type="Goods">
+        <id     property="id"     column="id"/>
+        <result property="title"  column="title"/>
+        <result property="type"   column="type"/>
+        <result property="price"  column="price"/>
+        <result property="stock"  column="stock"/>
+    </resultMap>
+
+    <!-- 插入商品 -->
+    <insert id="insert" parameterType="Goods" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO goods (title, type, price, stock)
+        VALUES (#{title}, #{type}, #{price}, #{stock})
+    </insert>
+
+    <!--
+        动态 if 查询：根据传入参数是否为空，动态拼接 WHERE 条件。
+        使用 <where> 标签自动处理第一个条件前的 AND，
+        每个 <if> 内部用 AND 连接即可。
+    -->
+    <select id="selectByCondition" resultMap="GoodsMap">
+        SELECT id, title, type, price, stock
+        FROM goods
+        <where>
+            <if test="title != null and title != ''">
+                AND title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="type != null and type != ''">
+                AND type = #{type}
+            </if>
+            <if test="minPrice != null">
+                AND price <![CDATA[>=]]> #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND price <![CDATA[<=]]> #{maxPrice}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- ==================== 1. 开启组件扫描 ==================== -->
+    <context:component-scan base-package="com"/>
+
+    <!-- ==================== 2. 数据源（Druid 可用，这里用 Spring 内置 DriverManagerDataSource） ==================== -->
+    <bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url"
+                  value="jdbc:mysql://localhost:3306/lab4_db?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false&amp;serverTimezone=Asia/Shanghai"/>
+        <property name="username" value="root"/>
+        <property name="password" value="huang426523"/>   <!-- 按本机实际密码修改 -->
+    </bean>
+
+    <!-- ==================== 3. JdbcTemplate ==================== -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- ==================== 4. 事务管理器 ==================== -->
+    <bean id="txManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- ==================== 5. 开启注解式事务 ==================== -->
+    <!--
+        作用：让 @Transactional 注解生效。
+        内部会引用名为 txManager 的事务管理器（也可通过 transaction-manager 属性指定）。
+    -->
+    <tx:annotation-driven transaction-manager="txManager"/>
+
+</beans>

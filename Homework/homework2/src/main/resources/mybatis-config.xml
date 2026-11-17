@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- 起别名，在 Mapper XML 中可直接写类名 -->
+    <typeAliases>
+        <typeAlias type="com.homework.entity.Goods" alias="Goods"/>
+    </typeAliases>
+
+    <!-- 环境配置 -->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <!-- 请根据自己 MySQL 实际用户名密码修改 -->
+                <property name="driver"   value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url"      value="jdbc:mysql://localhost:3306/homework2_db?useSSL=false&amp;serverTimezone=Asia/Shanghai&amp;characterEncoding=utf8"/>
+                <property name="username" value="root"/>
+                <property name="password" value="huang426523"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- 注册 Mapper XML -->
+    <mappers>
+        <mapper resource="mapper/GoodsMapper.xml"/>
+    </mappers>
+</configuration>

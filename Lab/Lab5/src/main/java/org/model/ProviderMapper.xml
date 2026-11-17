@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.model.ProviderMapper">
+
+    <resultMap id="providerResultMap" type="Provider">
+        <id     column="id"           property="id"/>
+        <result column="proCode"      property="proCode"/>
+        <result column="proName"      property="proName"/>
+        <result column="proContact"   property="proContact"/>
+        <result column="proPhone"     property="proPhone"/>
+        <result column="proAddress"   property="proAddress"/>
+        <result column="proFax"       property="proFax"/>
+        <result column="createdBy"    property="createdBy"/>
+        <result column="creationDate" property="creationDate"/>
+    </resultMap>
+
+    <sql id="providerCols">
+        id, proCode, proName, proContact, proPhone, proAddress, proFax, createdBy, creationDate
+    </sql>
+
+    <!-- ① 无参数查询 -->
+    <select id="getAllProviders" resultMap="providerResultMap">
+        SELECT <include refid="providerCols"/> FROM provider
+    </select>
+
+    <!-- ② 单参数查询 -->
+    <select id="getProviderById" resultMap="providerResultMap">
+        SELECT <include refid="providerCols"/> FROM provider WHERE id = #{id}
+    </select>
+
+    <!-- ③ 多参数查询（模糊 + 分页） -->
+    <select id="getProvidersByNameAndPage" resultMap="providerResultMap">
+        SELECT <include refid="providerCols"/>
+        FROM provider
+        <where>
+            <if test="proName != null and proName != ''">
+                AND proName LIKE CONCAT('%', #{proName}, '%')
+            </if>
+        </where>
+        LIMIT #{startIndex}, #{pageSize}
+    </select>
+
+    <!-- 新增 -->
+    <insert id="addProvider" parameterType="Provider" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO provider
+            (proCode, proName, proContact, proPhone, proAddress, proFax, createdBy)
+        VALUES
+            (#{proCode}, #{proName}, #{proContact}, #{proPhone}, #{proAddress}, #{proFax}, #{createdBy})
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateProvider" parameterType="Provider">
+        UPDATE provider
+        <set>
+            <if test="proCode != null">proCode = #{proCode},</if>
+            <if test="proName != null">proName = #{proName},</if>
+            <if test="proContact != null">proContact = #{proContact},</if>
+            <if test="proPhone != null">proPhone = #{proPhone},</if>
+            <if test="proAddress != null">proAddress = #{proAddress},</if>
+            <if test="proFax != null">proFax = #{proFax},</if>
+            <if test="createdBy != null">createdBy = #{createdBy},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteProviderById">
+        DELETE FROM provider WHERE id = #{id}
+    </delete>
+
+</mapper>

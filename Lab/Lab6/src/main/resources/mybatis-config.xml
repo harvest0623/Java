@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- 开启驼峰命名自动映射 (user_id → userId) -->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+
+    <!-- 类型别名，简化 Mapper XML 中的全限定类名 -->
+    <typeAliases>
+        <typeAlias alias="User"  type="org.example.entity.User"/>
+        <typeAlias alias="Goods" type="org.example.entity.Goods"/>
+    </typeAliases>
+
+    <!-- 环境配置 -->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver"   value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url"      value="jdbc:mysql://localhost:3306/homework2_db?useSSL=false&amp;serverTimezone=Asia/Shanghai&amp;characterEncoding=UTF-8"/>
+                <property name="username" value="root"/>
+                <property name="password" value="huang426523"/>   <!-- 改成你自己的MySQL密码 -->
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- 注册 Mapper XML 文件 -->
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml"/>
+        <mapper resource="mapper/GoodsMapper.xml"/>
+    </mappers>
+</configuration>
