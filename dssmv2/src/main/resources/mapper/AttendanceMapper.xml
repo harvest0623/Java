@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zsy.dao.AttendanceMapper">
+    <resultMap id="BaseResultMap" type="com.zsy.entity.Attendance">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="emp_id" jdbcType="INTEGER" property="empId" />
+        <result column="emp_name" jdbcType="VARCHAR" property="empName" />
+        <result column="work_date" jdbcType="DATE" property="workDate" />
+        <result column="check_in" jdbcType="TIME" property="checkIn" />
+        <result column="check_out" jdbcType="TIME" property="checkOut" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, emp_id empId, emp_name empName,
+        DATE_FORMAT(work_date, '%Y-%m-%d') workDate,
+        DATE_FORMAT(check_in, '%H:%i') checkIn,
+        DATE_FORMAT(check_out, '%H:%i') checkOut,
+        status, remark
+    </sql>
+
+    <!--动态查询：姓名、日期、状态-->
+    <select id="findAll" resultType="com.zsy.entity.Attendance">
+        select <include refid="Base_Column_List"/>
+        from tb_attendance
+        <where>
+            <if test="empName != null and empName != ''">
+                and emp_name like concat('%', #{empName}, '%')
+            </if>
+            <if test="workDate != null and workDate != ''">
+                and work_date = #{workDate}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and work_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and work_date &lt;= #{endDate}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+        order by work_date desc, id desc
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from tb_attendance
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.zsy.entity.Attendance" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_attendance (emp_id, emp_name, work_date,
+                                   check_in, check_out, status, remark)
+        values (#{empId,jdbcType=INTEGER}, #{empName,jdbcType=VARCHAR}, #{workDate,jdbcType=DATE},
+                nullif(#{checkIn,jdbcType=VARCHAR}, ''), nullif(#{checkOut,jdbcType=VARCHAR}, ''),
+                #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.zsy.entity.Attendance">
+        update tb_attendance
+        set emp_id = #{empId,jdbcType=INTEGER},
+            emp_name = #{empName,jdbcType=VARCHAR},
+            work_date = #{workDate,jdbcType=DATE},
+            check_in = nullif(#{checkIn,jdbcType=VARCHAR}, ''),
+            check_out = nullif(#{checkOut,jdbcType=VARCHAR}, ''),
+            status = #{status,jdbcType=INTEGER},
+            remark = #{remark,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

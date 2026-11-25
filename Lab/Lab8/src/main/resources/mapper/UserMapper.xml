@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.UserMapper">
+
+    <!-- 插入用户 -->
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_user (username, password, age, email, file_name, file_path)
+        VALUES (#{username}, #{password}, #{age}, #{email}, #{fileName}, #{filePath})
+    </insert>
+
+    <!-- 根据用户名查询 -->
+    <select id="selectByUsername" parameterType="String" resultType="User">
+        SELECT id, username, password, age, email, file_name AS fileName, file_path AS filePath
+        FROM t_user
+        WHERE username = #{username}
+    </select>
+
+    <!-- 统计用户名数量（判断是否存在） -->
+    <select id="countByUsername" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM t_user WHERE username = #{username}
+    </select>
+
+</mapper>

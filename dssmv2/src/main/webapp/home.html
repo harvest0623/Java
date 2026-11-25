@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>员工管理系统</title>
+    <link rel="stylesheet" href="css/font-awesome.min.css"/>
+    <script src="js/axios.min.js"></script>
+    <style>
+        /* 字体规范: 11px(提示) 12px(正文) 13px(按钮) 14px(小标题) 16px(大标题) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            font-size: 12px;
+            background: #f0f2f5;
+        }
+        a { color: inherit; text-decoration: none; }
+        .app { width: 100vw; height: 100vh; display: flex; }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 180px; background: #001529; color: #fff;
+            display: flex; flex-direction: column; flex-shrink: 0;
+            transition: width 0.25s;
+        }
+        .sidebar.collapsed { width: 56px; }
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .menu-text { display: none; }
+        .sidebar.collapsed .menu-item { justify-content: center; padding: 0; }
+        .sidebar.collapsed .logo { justify-content: center; padding: 0; }
+
+        .logo {
+            height: 56px; display: flex; align-items: center;
+            padding: 0 16px; gap: 10px; white-space: nowrap; overflow: hidden;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .logo-icon {
+            width: 28px; height: 28px; background: #1890ff; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .logo-icon i { font-size: 14px; color: #fff; }
+        .logo-text { font-size: 13px; font-weight: 600; letter-spacing: 0.5px; }
+
+        .menu { list-style: none; padding: 8px 0; flex: 1; overflow-y: auto; }
+        .menu::-webkit-scrollbar { width: 4px; }
+        .menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
+
+        .menu-item {
+            display: flex; align-items: center; padding: 0 16px;
+            height: 40px; color: rgba(255,255,255,0.75);
+            cursor: pointer; transition: all 0.2s;
+            border-left: 2px solid transparent; white-space: nowrap; overflow: hidden;
+        }
+        .menu-item i { font-size: 13px; width: 20px; text-align: center; margin-right: 10px; flex-shrink: 0; }
+        .menu-item:hover { background: rgba(24,144,255,0.1); color: #fff; }
+        .menu-item.active {
+            background: rgba(24,144,255,0.15); color: #fff;
+            border-left-color: #1890ff;
+        }
+        .menu-item.active i { color: #1890ff; }
+
+        /* 主区域 */
+        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+        .topbar {
+            height: 50px; background: #fff; display: flex; align-items: center;
+            padding: 0 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); flex-shrink: 0;
+        }
+        .collapse-btn {
+            width: 32px; height: 32px; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; border-radius: 4px;
+            color: #606266; font-size: 14px; transition: background 0.2s;
+        }
+        .collapse-btn:hover { background: #f0f2f5; color: #1890ff; }
+
+        .crumbs { margin-left: 12px; font-size: 12px; color: #909399; }
+        .crumbs span.current { color: #303133; font-weight: 500; }
+
+        .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+        .user {
+            display: flex; align-items: center; gap: 8px;
+            padding: 4px 10px; border-radius: 16px; cursor: pointer; transition: background 0.2s;
+        }
+        .user:hover { background: #f0f2f5; }
+        .avatar {
+            width: 28px; height: 28px; background: linear-gradient(135deg, #1890ff, #096dd9);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 12px; font-weight: 600;
+        }
+        .user-name { font-size: 12px; color: #303133; }
+
+        .logout {
+            display: flex; align-items: center; gap: 4px; padding: 4px 10px;
+            border-radius: 4px; color: #f56c6c; font-size: 12px; cursor: pointer;
+            transition: all 0.2s; border: 1px solid #fbc4c4; background: #fff;
+        }
+        .logout:hover { background: #f56c6c; color: #fff; border-color: #f56c6c; }
+
+        .content {
+            flex: 1; padding: 16px; overflow: hidden;
+        }
+        .content iframe {
+            width: 100%; height: 100%; border: none; border-radius: 6px;
+            background: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 56px; }
+            .sidebar .logo-text, .sidebar .menu-text { display: none; }
+            .sidebar .menu-item { justify-content: center; padding: 0; }
+            .sidebar .logo { justify-content: center; padding: 0; }
+            .user-name { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fa fa-users"></i></div>
+            <span class="logo-text">员工管理系统</span>
+        </div>
+        <ul class="menu">
+            <li class="menu-item active" data-page="elementui01.html" data-name="员工管理">
+                <i class="fa fa-user"></i><span class="menu-text">员工管理</span>
+            </li>
+            <li class="menu-item" data-page="elementui01.html" data-name="部门管理">
+                <i class="fa fa-sitemap"></i><span class="menu-text">部门管理</span>
+            </li>
+            <li class="menu-item" data-page="attendance.html" data-name="考勤管理">
+                <i class="fa fa-calendar"></i><span class="menu-text">考勤管理</span>
+            </li>
+            <li class="menu-item" data-page="elementui01.html" data-name="薪资管理">
+                <i class="fa fa-money"></i><span class="menu-text">薪资管理</span>
+            </li>
+            <li class="menu-item" data-page="elementui01.html" data-name="系统设置">
+                <i class="fa fa-cog"></i><span class="menu-text">系统设置</span>
+            </li>
+        </ul>
+    </div>
+    <div class="main">
+        <div class="topbar">
+            <div class="collapse-btn" onclick="toggleSidebar()"><i class="fa fa-bars"></i></div>
+            <div class="crumbs">首页 / <span class="current" id="crumbCurrent">员工管理</span></div>
+            <div class="topbar-right">
+                <div class="user"><div class="avatar">A</div><span class="user-name">管理员</span></div>
+                <div class="logout" onclick="quit()"><i class="fa fa-sign-out"></i>退出</div>
+            </div>
+        </div>
+        <div class="content">
+            <iframe name="mainFrame" src="elementui01.html"></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
+    function quit() {
+        if (confirm('确定退出登录吗？')) {
+            axios.post("User/quit").then(function() { location.href = "login.html"; });
+        }
+    }
+    document.querySelectorAll('.menu-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.menu-item').forEach(function(i) { i.classList.remove('active'); });
+            this.classList.add('active');
+            document.getElementById('crumbCurrent').textContent = this.dataset.name;
+            document.querySelector('iframe[name="mainFrame"]').src = this.dataset.page;
+        });
+    });
+</script>
+</body>
+</html>

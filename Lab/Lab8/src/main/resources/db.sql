@@ -1,0 +1,13 @@
+CREATE DATABASE IF NOT EXISTS lab8 DEFAULT CHARSET utf8mb4;
+USE lab8;
+
+DROP TABLE IF EXISTS t_user;
+CREATE TABLE t_user (
+    id        INT PRIMARY KEY AUTO_INCREMENT COMMENT '用户ID',
+    username  VARCHAR(30) NOT NULL UNIQUE COMMENT '用户名',
+    password  VARCHAR(30) NOT NULL COMMENT '密码',
+    age       INT COMMENT '年龄',
+    email     VARCHAR(50) COMMENT '邮箱',
+    file_name VARCHAR(200) COMMENT '上传文件名',
+    file_path VARCHAR(300) COMMENT '上传文件路径'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
